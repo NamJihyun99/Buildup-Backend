@@ -1,2 +1,2 @@
-# Buildup-Server
-Backend Application for Buildup
+# Buildup-Backend
+Backend for Buildup Application
