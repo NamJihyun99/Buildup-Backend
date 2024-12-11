@@ -1,8 +1,7 @@
 package buildup.server.auth.exception;
 
 import lombok.Getter;
-
-import javax.naming.AuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 
 @Getter
 public class AuthException extends AuthenticationException {
