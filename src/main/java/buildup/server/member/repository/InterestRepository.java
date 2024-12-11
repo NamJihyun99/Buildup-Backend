@@ -1,11 +1,11 @@
 package buildup.server.member.repository;
 
-import buildup.server.entity.Interest;
+import buildup.server.entity.InterestRemove;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface InterestRepository extends JpaRepository<Interest, Long> {
+public interface InterestRepository extends JpaRepository<InterestRemove, Long> {
 
-    List<Interest> findAllByFieldContaining(String keyword);
+    List<InterestRemove> findAllByFieldContaining(String keyword);
 }

@@ -1,12 +1,11 @@
 package buildup.server.member.domain;
 
 import buildup.server.entity.Interest;
-import buildup.server.member.domain.Member;
+import buildup.server.entity.InterestConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,8 +32,8 @@ public class Profile {
 
     private String schoolPublicYn;
 
-    @OneToMany(mappedBy = "profile")
-    private List<Interest> interests = new ArrayList<>();
+    @Convert(converter = InterestConverter.class)
+    private EnumSet<Interest> interests;
 
     @Builder
     public Profile(Member member, String nickname, String email, String school, String major, String grade, String schoolPublicYn) {

@@ -1,6 +1,5 @@
 package buildup.server.member.dto;
 
-import buildup.server.entity.Interest;
 import buildup.server.member.domain.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

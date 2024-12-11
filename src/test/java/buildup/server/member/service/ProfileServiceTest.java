@@ -2,6 +2,7 @@ package buildup.server.member.service;
 
 import buildup.server.common.DummyObject;
 import buildup.server.entity.Interest;
+import buildup.server.entity.InterestRemove;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
 import buildup.server.member.dto.LocalJoinRequest;
@@ -48,15 +49,15 @@ class ProfileServiceTest extends DummyObject {
 
         Member member = newMember(loginRequest);
         Profile profile = profileRequest.toProfile(member);
-        List<Interest> interestList = new ArrayList<>();
-        Interest interest1 = new Interest(profile, "연구/개발");
-        Interest interest2 = new Interest(profile, "디자인");
-        interestList.add(interest1);
-        interestList.add(interest2);
+        List<InterestRemove> interestRemoveList = new ArrayList<>();
+        InterestRemove interestRemove1 = new InterestRemove(profile, Interest.RESEARCH);
+        InterestRemove interestRemove2 = new InterestRemove(profile, Interest.DESIGN);
+        interestRemoveList.add(interestRemove1);
+        interestRemoveList.add(interestRemove2);
 
         // when
-        Mockito.when(interestRepository.save(ArgumentMatchers.any())).thenReturn(interest1);
-        Mockito.when(interestRepository.save(ArgumentMatchers.any())).thenReturn(interest2);
+        Mockito.when(interestRepository.save(ArgumentMatchers.any())).thenReturn(interestRemove1);
+        Mockito.when(interestRepository.save(ArgumentMatchers.any())).thenReturn(interestRemove2);
         Mockito.when(profileRepository.save(ArgumentMatchers.any())).thenReturn(profile);
         Long profileId = profileService.saveProfile(profileRequest, member);
         // then

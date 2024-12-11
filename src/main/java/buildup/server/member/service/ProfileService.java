@@ -7,8 +7,8 @@ import buildup.server.auth.dto.TokenRequestDto;
 import buildup.server.auth.exception.AuthErrorCode;
 import buildup.server.auth.exception.AuthException;
 import buildup.server.auth.repository.RefreshTokenRepository;
+import buildup.server.entity.InterestRemove;
 import buildup.server.entity.Interest;
-import buildup.server.entity.InterestCategory;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
 import buildup.server.member.dto.ProfileHomeResponse;
@@ -103,7 +103,7 @@ public class ProfileService {
     @Transactional
     public List<ProfileHomeResponse> searchProfilesByKeyword(String keyword) {
         List<Profile> profilesByInterest = interestRepository.findAllByFieldContaining(keyword).stream()
-                .map(Interest::getProfile).distinct().collect(Collectors.toList());
+                .map(InterestRemove::getProfile).distinct().collect(Collectors.toList());
         List<Profile> profilesByActivity = findProfilesById(activityRepository.findAllByNameContaining(keyword).stream()
                 .map(Activity::getMember).map(Member::getId).distinct().collect(Collectors.toList()));
 
@@ -130,7 +130,7 @@ public class ProfileService {
     private void saveInterests(List<String> requestList, Profile profile) {
         for (String interest : requestList) {
 //            Interest select = interestRepository.save(new Interest(profile, interest));
-            Interest select = interestRepository.save(new Interest(profile, InterestCategory.fromField(interest)));
+            InterestRemove select = interestRepository.save(new InterestRemove(profile, Interest.fromField(interest)));
             profile.getInterests().add(select);
         }
     }
