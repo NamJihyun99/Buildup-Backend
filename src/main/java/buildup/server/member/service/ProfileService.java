@@ -7,16 +7,13 @@ import buildup.server.auth.dto.TokenRequestDto;
 import buildup.server.auth.exception.AuthErrorCode;
 import buildup.server.auth.exception.AuthException;
 import buildup.server.auth.repository.RefreshTokenRepository;
-import buildup.server.entity.InterestRemove;
-import buildup.server.entity.Interest;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
 import buildup.server.member.dto.ProfileHomeResponse;
 import buildup.server.member.dto.ProfilePageResponse;
-import buildup.server.member.dto.ProfileSaveRequest;
+import buildup.server.member.dto.ProfileRequest;
 import buildup.server.member.exception.MemberErrorCode;
 import buildup.server.member.exception.MemberException;
-import buildup.server.member.repository.InterestRepository;
 import buildup.server.member.repository.MemberRepository;
 import buildup.server.member.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,15 +35,14 @@ public class ProfileService {
 
     private final MemberRepository memberRepository;
     private final ProfileRepository profileRepository;
-    private final InterestRepository interestRepository;
+//    private final InterestRepository interestRepository;
     private final ActivityRepository activityRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final S3Service s3Service;
 
     @Transactional
-    public Long saveProfile(ProfileSaveRequest request, Member member) {
+    public Long saveProfile(ProfileRequest request, Member member) {
         Profile profile = request.toProfile(member);
-        saveInterests(request.getInterests(), profile);
         profile.setMember(member);
         return profileRepository.save(profile).getId();
     }
@@ -64,15 +60,10 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateProfile(ProfileSaveRequest request) {
+    public void updateProfile(ProfileRequest request) {
         Member member = findCurrentMember();
         Profile profile = profileRepository.findById(member.getId()).get();
         request.updateProfile(profile);
-
-        // 관심분야 리스트 수정 - 기존 Interest 모두 삭제하고 다시 저장
-        interestRepository.deleteAll(profile.getInterests());
-        profile.getInterests().clear();
-        saveInterests(request.getInterests(), profile);
     }
 
     @Transactional
@@ -102,8 +93,8 @@ public class ProfileService {
 
     @Transactional
     public List<ProfileHomeResponse> searchProfilesByKeyword(String keyword) {
-        List<Profile> profilesByInterest = interestRepository.findAllByFieldContaining(keyword).stream()
-                .map(InterestRemove::getProfile).distinct().collect(Collectors.toList());
+        List<Profile> profilesByInterest = profileRepository.searchByInterestsContains(keyword).stream()
+                .distinct().collect(Collectors.toList());
         List<Profile> profilesByActivity = findProfilesById(activityRepository.findAllByNameContaining(keyword).stream()
                 .map(Activity::getMember).map(Member::getId).distinct().collect(Collectors.toList()));
 
@@ -125,14 +116,6 @@ public class ProfileService {
             profiles.add(profile);
         }
         return profiles;
-    }
-
-    private void saveInterests(List<String> requestList, Profile profile) {
-        for (String interest : requestList) {
-//            Interest select = interestRepository.save(new Interest(profile, interest));
-            InterestRemove select = interestRepository.save(new InterestRemove(profile, Interest.fromField(interest)));
-            profile.getInterests().add(select);
-        }
     }
 
     // TODO: 로그인한 사용자

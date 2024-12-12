@@ -36,7 +36,7 @@ public class Profile {
     private EnumSet<Interest> interests;
 
     @Builder
-    public Profile(Member member, String nickname, String email, String school, String major, String grade, String schoolPublicYn) {
+    public Profile(Member member, String nickname, String email, String school, String major, String grade, String schoolPublicYn, EnumSet<Interest> interests) {
         this.member = member;
         this.nickname = nickname;
         this.email = email;
@@ -44,15 +44,15 @@ public class Profile {
         this.major = major;
         this.grade = grade;
         this.schoolPublicYn = schoolPublicYn;
+        this.interests = interests == null ? EnumSet.noneOf(Interest.class) : EnumSet.copyOf(interests);
     }
 
-    public Profile updateProfile(String nickname, String school, String major, String grade, String schoolPublicYn) {
+    public void update(String nickname, String school, String major, String grade, String schoolPublicYn, EnumSet<Interest> interests) {
         this.nickname = nickname;
         this.school = school;
         this.major = major;
         this.grade = grade;
         this.schoolPublicYn = schoolPublicYn;
-
-        return this;
+        this.interests = interests == null ? EnumSet.noneOf(Interest.class) : EnumSet.copyOf(interests);
     }
 }

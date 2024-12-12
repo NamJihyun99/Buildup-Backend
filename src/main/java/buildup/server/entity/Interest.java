@@ -2,6 +2,9 @@ package buildup.server.entity;
 
 import lombok.Getter;
 
+import java.util.EnumSet;
+import java.util.List;
+
 @Getter
 public enum Interest {
 
@@ -39,5 +42,11 @@ public enum Interest {
             }
         }
         throw new IllegalArgumentException("Invalid field: " + field);
+    }
+
+    public static EnumSet<Interest> fromFields(List<String> fields) {
+        EnumSet<Interest> interests = EnumSet.noneOf(Interest.class);
+        fields.forEach(Interest::fromField);
+        return interests;
     }
 }
