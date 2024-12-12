@@ -8,7 +8,7 @@ import buildup.server.common.DummyObject;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
 import buildup.server.member.dto.LocalJoinRequest;
-import buildup.server.member.dto.ProfileSaveRequest;
+import buildup.server.member.dto.ProfileRequest;
 import buildup.server.member.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,14 +43,14 @@ class MemberServiceTest extends DummyObject {
         ArrayList<String> interests = new ArrayList<>();
         interests.add("연구/개발");
         interests.add("디자인");
-        ProfileSaveRequest profileSaveRequest = new ProfileSaveRequest("jojo",
+        ProfileRequest profileRequest = new ProfileRequest("jojo",
                 "username@naver.com",
                 "Sookmyung Women's University",
                 "Computer Science", "4", "N", interests);
         LocalJoinRequest request = new LocalJoinRequest(
                 "username",
                 passwordEncoder.encode("password4321"),
-                profileSaveRequest,
+                profileRequest,
                 "Y"
         );
         Member member = newMember(request);
@@ -59,7 +59,7 @@ class MemberServiceTest extends DummyObject {
         Mockito.when(memberRepository.findAllByEmailAndUsername(ArgumentMatchers.any(), ArgumentMatchers.any()))
                 .thenReturn(new ArrayList<>());
         Mockito.when(memberRepository.save(ArgumentMatchers.any())).thenReturn(member);
-        Mockito.when(profileService.saveProfile(profileSaveRequest, member)).thenReturn(profileEntity.getId());
+        Mockito.when(profileService.saveProfile(profileRequest, member)).thenReturn(profileEntity.getId());
         Mockito.when(authService.createAuth(ArgumentMatchers.any())).thenReturn(tokenProvider.createAuthToken(member.getUsername(), new Date(new Date().getTime()+1800000)));
         Mockito.when(authService.setRefreshToken(ArgumentMatchers.any())).thenReturn(new MemberRefreshToken(member.getUsername(), "refreshToken"));
 

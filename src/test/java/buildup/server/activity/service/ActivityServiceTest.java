@@ -6,12 +6,11 @@ import buildup.server.activity.repository.ActivityRepository;
 import buildup.server.category.Category;
 import buildup.server.category.CategoryRepository;
 import buildup.server.category.CategoryService;
-import buildup.server.category.exception.CategoryException;
 import buildup.server.common.DummyObject;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
 import buildup.server.member.dto.LocalJoinRequest;
-import buildup.server.member.dto.ProfileSaveRequest;
+import buildup.server.member.dto.ProfileRequest;
 import buildup.server.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,7 +49,7 @@ class ActivityServiceTest extends DummyObject {
         LocalJoinRequest request = new LocalJoinRequest(
                 "username",
                 passwordEncoder.encode("password4321"),
-                new ProfileSaveRequest("jojo",
+                new ProfileRequest("jojo",
                         "username@naver.com",
                         "Sookmyung Women's Universitiy",
                         "Computer Science", "4", "N", interests),

@@ -1,12 +1,11 @@
 package buildup.server.member.domain;
 
 import buildup.server.entity.Interest;
-import buildup.server.member.domain.Member;
+import buildup.server.entity.InterestConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,11 +32,11 @@ public class Profile {
 
     private String schoolPublicYn;
 
-    @OneToMany(mappedBy = "profile")
-    private List<Interest> interests = new ArrayList<>();
+    @Convert(converter = InterestConverter.class)
+    private EnumSet<Interest> interests;
 
     @Builder
-    public Profile(Member member, String nickname, String email, String school, String major, String grade, String schoolPublicYn) {
+    public Profile(Member member, String nickname, String email, String school, String major, String grade, String schoolPublicYn, EnumSet<Interest> interests) {
         this.member = member;
         this.nickname = nickname;
         this.email = email;
@@ -45,15 +44,15 @@ public class Profile {
         this.major = major;
         this.grade = grade;
         this.schoolPublicYn = schoolPublicYn;
+        this.interests = interests == null ? EnumSet.noneOf(Interest.class) : EnumSet.copyOf(interests);
     }
 
-    public Profile updateProfile(String nickname, String school, String major, String grade, String schoolPublicYn) {
+    public void update(String nickname, String school, String major, String grade, String schoolPublicYn, EnumSet<Interest> interests) {
         this.nickname = nickname;
         this.school = school;
         this.major = major;
         this.grade = grade;
         this.schoolPublicYn = schoolPublicYn;
-
-        return this;
+        this.interests = interests == null ? EnumSet.noneOf(Interest.class) : EnumSet.copyOf(interests);
     }
 }

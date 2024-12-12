@@ -35,7 +35,7 @@ public class Record {
     private Activity activity;
     @Transient
     @OneToMany(mappedBy = "record")
-    private List<RecordImg> images = new ArrayList<>();
+    private List<RecordImage> images = new ArrayList<>();
 
     @Builder
     public Record(String title, String experience, String concept, String result, String content, LocalDate date, String url, Activity activity) {
@@ -59,9 +59,9 @@ public class Record {
         this.url = url;
     }
 
-    public void updateRecordImage(List<RecordImg> images){
+    public void updateRecordImage(List<RecordImage> images){
         this.images = images;
-        for (RecordImg img : images) {
+        for (RecordImage img : images) {
             img.setRecord(this);
         }
     }

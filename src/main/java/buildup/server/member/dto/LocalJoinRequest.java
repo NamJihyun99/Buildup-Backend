@@ -16,7 +16,7 @@ public class LocalJoinRequest {
     @NotBlank
     private String password;
 
-    private ProfileSaveRequest profile;
+    private ProfileRequest profile;
 
     @NotBlank
     private String emailAgreeYn;

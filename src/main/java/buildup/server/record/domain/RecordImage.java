@@ -1,6 +1,5 @@
 package buildup.server.record.domain;
 
-import buildup.server.record.domain.Record;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -11,7 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class RecordImg {
+public class RecordImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +26,7 @@ public class RecordImg {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Record record;
 
-    public RecordImg(String storeUrl, Record record) {
+    public RecordImage(String storeUrl, Record record) {
         this.storeUrl = storeUrl;
         this.record = record;
     }

@@ -27,7 +27,7 @@ public class ProfilePageResponse {
 //        List<String> fieldList = profile.getInterests().stream()
 //                .map(Interest::getField).collect(Collectors.toList());
         List<String> fieldList = profile.getInterests().stream()
-                .map(interest -> interest.getField().getField()).collect(Collectors.toList());
+                .map(Interest::getField).collect(Collectors.toList());
         return new ProfilePageResponse(
                 profile.getNickname(),
                 profile.getEmail(),

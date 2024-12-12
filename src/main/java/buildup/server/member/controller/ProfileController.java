@@ -5,7 +5,7 @@ import buildup.server.common.response.StatusResponse;
 import buildup.server.common.response.StringResponse;
 import buildup.server.member.dto.ProfileHomeResponse;
 import buildup.server.member.dto.ProfilePageResponse;
-import buildup.server.member.dto.ProfileSaveRequest;
+import buildup.server.member.dto.ProfileRequest;
 import buildup.server.member.dto.SearchDto;
 import buildup.server.member.service.ProfileService;
 import jakarta.validation.Valid;
@@ -38,7 +38,7 @@ public class ProfileController {
     }
 
     @PutMapping
-    public StringResponse updateProfile(@Valid @RequestBody ProfileSaveRequest request) {
+    public StringResponse updateProfile(@Valid @RequestBody ProfileRequest request) {
         profileService.updateProfile(request);
         return new StringResponse("프로필을 수정하였습니다.");
     }

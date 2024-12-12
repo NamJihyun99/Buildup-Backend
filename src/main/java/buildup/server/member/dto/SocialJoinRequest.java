@@ -16,7 +16,7 @@ public class SocialJoinRequest {
 
     @NotBlank
     private String provider;
-    private ProfileSaveRequest profile;
+    private ProfileRequest profile;
     @NotBlank
     private String emailAgreeYn;
     public static Member toEntity(SocialJoinRequest request, String pw) {
