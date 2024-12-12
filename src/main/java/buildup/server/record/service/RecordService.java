@@ -30,12 +30,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecordService {
     private final ActivityRepository activityRepository;
-    private final MemberRepository memberRepository;
     private final RecordRepository recordRepository;
     private final RecordImageRepository recordImageRepository;
-    private final MemberService memberService;
-    private final CategoryRepository categoryRepository;
-    private final CategoryService categoryService;
     private final S3Service s3Service;
 
     @Transactional
@@ -48,8 +44,6 @@ public class RecordService {
         record.setActivity(activity);
         return recordRepository.save(record);
     }
-
-
 
     @Transactional(readOnly = true)
     public RecordResponse readOneRecord(Long recordId) {
@@ -119,20 +113,6 @@ public class RecordService {
         }
     }
 
-    private RecordImgRequest updateOneImage(MultipartFile multipartFile){
-        return RecordImgRequest.builder()
-                .storeUrl(s3Service.uploadOneRecordImg(multipartFile))
-                .build();
-    }
-
-    private void putRequestParser(List<RecordImage> recordImageList, List<RecordImgRequest> recordImgRequestList){
-        for (RecordImgRequest recordImgRequest : recordImgRequestList){
-            RecordImage recordImage = RecordImage.builder()
-                    .storeUrl(recordImgRequest.getStoreUrl())
-                    .build();
-            recordImageList.add(recordImage);
-        }
-    }
     private void deleteRecord(Long id) {
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new RecordException(RecordErrorCode.NOT_FOUND_RECORD));
