@@ -9,12 +9,12 @@ import buildup.server.category.CategoryService;
 import buildup.server.member.repository.MemberRepository;
 import buildup.server.member.service.MemberService;
 import buildup.server.member.service.S3Service;
+import buildup.server.record.domain.RecordImage;
 import buildup.server.record.dto.*;
 import buildup.server.record.exception.RecordErrorCode;
 import buildup.server.record.exception.RecordException;
 import buildup.server.record.domain.Record;
-import buildup.server.record.domain.RecordImg;
-import buildup.server.record.repository.RecordImgRepository;
+import buildup.server.record.repository.RecordImageRepository;
 import buildup.server.record.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class RecordService {
     private final ActivityRepository activityRepository;
     private final MemberRepository memberRepository;
     private final RecordRepository recordRepository;
-    private final RecordImgRepository recordImgRepository;
+    private final RecordImageRepository recordImageRepository;
     private final MemberService memberService;
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
@@ -56,9 +56,9 @@ public class RecordService {
         Record record = recordRepository.findById(recordId)
                 .orElseThrow(() -> new RecordException(RecordErrorCode.NOT_FOUND_RECORD));
 
-        List<String> imgUrls = recordImgRepository.findAllByRecord(record)
+        List<String> imgUrls = recordImageRepository.findAllByRecord(record)
                 .stream()
-                .map(RecordImg::getStoreUrl)
+                .map(RecordImage::getStoreUrl)
                 .collect(Collectors.toList());
 
         return new RecordResponse(recordId, record, imgUrls);
@@ -85,7 +85,7 @@ public class RecordService {
 
         Record record = recordRepository.findById(requestDto.getRecordid())
                 .orElseThrow(() -> new RecordException(RecordErrorCode.NOT_FOUND_RECORD));
-        List<RecordImg> recordImagesByRecordId = recordImgRepository.findByRecordId(requestDto.getRecordid());
+        List<RecordImage> recordImagesByRecordId = recordImageRepository.findByRecordId(requestDto.getRecordid());
 
         int existingImagesCount = recordImagesByRecordId.size();
         int newImagesCount = multipartFiles.size();
@@ -100,14 +100,14 @@ public class RecordService {
                 }
                 recordImagesByRecordId.get(i).setStoreUrl(imgUrls.get(i));
             } else {
-                RecordImg newRecordImg = new RecordImg(imgUrls.get(i), record);
-                recordImgRepository.save(newRecordImg);
+                RecordImage newRecordImage = new RecordImage(imgUrls.get(i), record);
+                recordImageRepository.save(newRecordImage);
             }
         }
 
         for(int i=newImagesCount; i<existingImagesCount; i++) {
             s3Service.deleteOneRecordImg(recordImagesByRecordId.get(i).getStoreUrl());
-            recordImgRepository.delete(recordImagesByRecordId.get(i));
+            recordImageRepository.delete(recordImagesByRecordId.get(i));
         }
     }
 
@@ -125,19 +125,19 @@ public class RecordService {
                 .build();
     }
 
-    private void putRequestParser(List<RecordImg> recordImgList, List<RecordImgRequest> recordImgRequestList){
+    private void putRequestParser(List<RecordImage> recordImageList, List<RecordImgRequest> recordImgRequestList){
         for (RecordImgRequest recordImgRequest : recordImgRequestList){
-            RecordImg recordImg = RecordImg.builder()
+            RecordImage recordImage = RecordImage.builder()
                     .storeUrl(recordImgRequest.getStoreUrl())
                     .build();
-            recordImgList.add(recordImg);
+            recordImageList.add(recordImage);
         }
     }
     private void deleteRecord(Long id) {
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new RecordException(RecordErrorCode.NOT_FOUND_RECORD));
-        List<RecordImg> recordImages = recordImgRepository.findAllByRecord(record);
-        recordImgRepository.deleteAll(recordImages);
+        List<RecordImage> recordImages = recordImageRepository.findAllByRecord(record);
+        recordImageRepository.deleteAll(recordImages);
         recordRepository.delete(record);
     }
 
@@ -145,9 +145,9 @@ public class RecordService {
     public void createRecordImages(Record record, List<String> urls) {
         urls.forEach(
                 url -> {
-                    RecordImg recordImg = new RecordImg(url, record);
-                    recordImgRepository.save(recordImg);
-                    record.getImages().add(recordImg);
+                    RecordImage recordImage = new RecordImage(url, record);
+                    recordImageRepository.save(recordImage);
+                    record.getImages().add(recordImage);
                 }
         );
     }
