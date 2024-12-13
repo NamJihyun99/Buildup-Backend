@@ -2,6 +2,7 @@ package buildup.server.entity;
 
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -36,17 +37,14 @@ public enum Interest {
     }
 
     public static Interest fromField(String field) {
-        for (Interest category : Interest.values()) {
-            if (category.getField().equals(field)) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("Invalid field: " + field);
+        return Arrays.stream(Interest.values())
+                .filter(interest -> interest.field.equals(field)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid field: " + field));
     }
 
     public static EnumSet<Interest> fromFields(List<String> fields) {
         EnumSet<Interest> interests = EnumSet.noneOf(Interest.class);
-        fields.forEach(Interest::fromField);
+        fields.forEach(field -> interests.add(Interest.fromField(field)));
         return interests;
     }
 }

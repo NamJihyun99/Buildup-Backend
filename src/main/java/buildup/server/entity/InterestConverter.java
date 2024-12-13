@@ -15,6 +15,9 @@ public class InterestConverter implements AttributeConverter<EnumSet<Interest>, 
     @Override
     public String convertToDatabaseColumn(EnumSet<Interest> attributes) {
         StringBuilder value = new StringBuilder();
+        if (attributes == null || attributes.isEmpty()) {
+            return "";
+        }
         attributes.forEach(attribute -> value.append(attribute.name()).append(DELIMITER));
         if (value.charAt(value.length() - 1) == DELIMITER.charAt(0)) {
             value.deleteCharAt(value.length() - 1);
@@ -29,7 +32,7 @@ public class InterestConverter implements AttributeConverter<EnumSet<Interest>, 
             return result;
         }
         Arrays.stream(StringUtils.trimAllWhitespace(dbData).toUpperCase().split(DELIMITER))
-                .forEach(token -> result.add(Interest.fromField(token)));
+                .forEach(token -> result.add(Interest.valueOf(token)));
         return result;
     }
 }

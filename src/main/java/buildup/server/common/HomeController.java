@@ -22,17 +22,6 @@ public class HomeController {
     private final Environment env;
     private final MemberService memberService;
 
-    @GetMapping("/home/profile")
-    public StringResponse profile() {
-        List<String> profiles = Arrays.asList(env.getActiveProfiles());
-        List<String> realProfiles = Arrays.asList("real1", "real2");
-        String defaultProfile = profiles.isEmpty() ? "default" : profiles.get(0);
-        return new StringResponse(profiles.stream()
-                .filter(realProfiles::contains)
-                .findAny()
-                .orElse(defaultProfile));
-    }
-
     @GetMapping("/health")
     public StringResponse healthCheck() {return new StringResponse("HealthCheck!!");}
 
