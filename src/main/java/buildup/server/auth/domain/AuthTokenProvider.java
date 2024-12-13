@@ -1,12 +1,13 @@
 package buildup.server.auth.domain;
 
 import buildup.server.auth.exception.AuthErrorCode;
-import buildup.server.auth.exception.AuthException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -40,7 +41,7 @@ public class AuthTokenProvider {
         return new AuthToken(token, key);
     }
 
-    public Authentication getAuthentication(AuthToken authToken) throws AuthException {
+    public Authentication getAuthentication(AuthToken authToken) throws AuthenticationException {
 
        if (authToken.validate()) {
            Claims claims = authToken.getTokenClaims();
@@ -53,6 +54,6 @@ public class AuthTokenProvider {
                    authorities);
            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
        }
-       throw new AuthException(AuthErrorCode.UNAUTHORIZED);
+       throw new AuthenticationCredentialsNotFoundException(AuthErrorCode.UNAUTHORIZED.getDefaultMessage());
     }
 }

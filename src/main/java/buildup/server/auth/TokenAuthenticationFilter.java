@@ -2,7 +2,6 @@ package buildup.server.auth;
 
 import buildup.server.auth.domain.AuthToken;
 import buildup.server.auth.domain.AuthTokenProvider;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.common.HeaderUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,11 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,22 +47,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         AuthToken token = tokenProvider.convertAuthToken(tokenStr);
         log.info("[TokenAuthenticationFilter] Request from: {}", request.getServletPath());
 
-
         if (token.validate()) {
-            Authentication authentication = null;
+            Authentication authentication;
             try {
                 authentication = tokenProvider.getAuthentication(token);
-            } catch (AuthException e) {
+            } catch (AuthenticationException e) {
                 throw new RuntimeException(e);
             }
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
-
     }
-
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) {
-//        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
-//    }
 }

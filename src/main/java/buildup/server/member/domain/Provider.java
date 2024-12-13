@@ -1,7 +1,5 @@
 package buildup.server.member.domain;
 
-import buildup.server.auth.exception.AuthErrorCode;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.member.exception.MemberErrorCode;
 import buildup.server.member.exception.MemberException;
 import com.fasterxml.jackson.annotation.JsonValue;

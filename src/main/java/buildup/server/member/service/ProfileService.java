@@ -4,8 +4,6 @@ import buildup.server.activity.domain.Activity;
 import buildup.server.activity.repository.ActivityRepository;
 import buildup.server.auth.domain.MemberRefreshToken;
 import buildup.server.auth.dto.TokenRequestDto;
-import buildup.server.auth.exception.AuthErrorCode;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.auth.repository.RefreshTokenRepository;
 import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Profile;
@@ -18,8 +16,10 @@ import buildup.server.member.repository.MemberRepository;
 import buildup.server.member.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -121,9 +121,8 @@ public class ProfileService {
     // TODO: 로그인한 사용자
     private Member findCurrentMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member user = memberRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-        return user;
+        return memberRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND.getDefaultMessage()));
     }
 
     @Transactional
@@ -131,7 +130,7 @@ public class ProfileService {
         String memberId = findCurrentMember().getUsername();
         MemberRefreshToken memberRefreshToken = refreshTokenRepository.findByUsernameAndRefreshToken(memberId, tokenRequestDto.getRefreshToken());
         if (memberRefreshToken == null) {
-            throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN, "가입되지 않은 회원이거나 유효하지 않은 리프레시 토큰입니다.");
+            throw new BadCredentialsException("가입되지 않은 회원이거나 유효하지 않은 리프레시 토큰입니다.");
         }
         refreshTokenRepository.deleteById(memberRefreshToken.getRefreshTokenId());
     }

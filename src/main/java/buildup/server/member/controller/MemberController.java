@@ -1,13 +1,9 @@
 package buildup.server.member.controller;
 
 import buildup.server.auth.domain.AuthInfo;
-import buildup.server.auth.dto.CodeDto;
 import buildup.server.auth.dto.TokenDto;
-import buildup.server.auth.dto.TokenRequestDto;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.auth.service.AuthService;
 import buildup.server.common.response.IdResponse;
-import buildup.server.common.response.StatusResponse;
 import buildup.server.common.response.StringResponse;
 import buildup.server.member.domain.Provider;
 import buildup.server.member.dto.*;
@@ -19,13 +15,8 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -108,7 +99,7 @@ public class MemberController {
     }
 
     @PostMapping("/reissue")
-    public TokenDto reissueToken(@Valid @RequestBody TokenDto tokenDto) throws AuthException {
+    public TokenDto reissueToken(@Valid @RequestBody TokenDto tokenDto) throws AuthenticationException {
         AuthInfo info = authService.reissueToken(tokenDto);
         return new TokenDto(info.getAccessToken().getToken(), info.getMemberRefreshToken().getRefreshToken());
     }

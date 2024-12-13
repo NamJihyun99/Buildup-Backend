@@ -10,12 +10,16 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorEntity {
-    private String errorCode;
+    private String status;
     private String errorMessage;
     private Map<String, String> errors;
 
-    public ErrorEntity(String errorCode, String errorMessage) {
-        this.errorCode = errorCode;
+    public ErrorEntity(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public ErrorEntity(String status, String errorMessage) {
+        this.status = status;
         this.errorMessage = errorMessage;
     }
 }

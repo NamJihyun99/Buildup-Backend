@@ -15,7 +15,8 @@ public enum MemberErrorCode {
     MEMBER_PROFILE_BAD_REQUEST("img가 null일 수 없습니다."),
     AUTH_PROVIDER_MISS_MATCH("소셜 로그인 provider 정보가 일치하지 않습니다."),
     ACCOUNT_IN_SOCIAL("일반 회원가입으로 가입한 계정이 아닙니다."),
-    MEMBER_PW_UPDATE_FAILED("비밀번호 재설정에 실패하였습니다.");
+    MEMBER_PW_UPDATE_FAILED("비밀번호 재설정에 실패하였습니다."),
+    NOT_EXPIRED_TOKEN_YET("아직 토큰이 만료되지 않았습니다."),;
 
 
     private String defaultMessage;

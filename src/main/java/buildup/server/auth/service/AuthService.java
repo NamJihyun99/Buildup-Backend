@@ -2,17 +2,13 @@ package buildup.server.auth.service;
 
 import buildup.server.auth.domain.*;
 import buildup.server.auth.dto.TokenDto;
-import buildup.server.auth.dto.TokenRequestDto;
 import buildup.server.auth.exception.AuthErrorCode;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.auth.repository.RefreshTokenRepository;
 import buildup.server.common.AppProperties;
-import buildup.server.member.domain.Member;
 import buildup.server.member.domain.Role;
 import buildup.server.member.dto.LoginRequest;
 import buildup.server.member.exception.MemberErrorCode;
 import buildup.server.member.exception.MemberException;
-import buildup.server.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,29 +91,27 @@ public class AuthService {
 
     // TODO: 예외처리
     @Transactional
-    public AuthInfo reissueToken(TokenDto dto) throws AuthException {
+    public AuthInfo reissueToken(TokenDto dto) throws AuthenticationException {
         AuthToken expiredToken = tokenProvider.convertAuthToken(dto.getAccessToken());
         AuthToken refreshToken = tokenProvider.convertAuthToken(dto.getRefreshToken());
 
         Claims claims = expiredToken.getExpiredTokenClaims();
         if (claims == null) {
-            throw new AuthException(AuthErrorCode.NOT_EXPIRED_TOKEN_YET);
-        } else {
-            log.info("claims={}", claims);
+            throw new MemberException(MemberErrorCode.NOT_EXPIRED_TOKEN_YET) {
+            };
         }
         String username = claims.getSubject();
         Role role = Role.of(claims.get("role", String.class));
 
         if (!refreshToken.validate()) {
-            throw new AuthException(AuthErrorCode.INVALID_REFRESH_TOKEN);
+            throw new BadCredentialsException(AuthErrorCode.INVALID_REFRESH_TOKEN.getDefaultMessage());
         }
 
         // refresh token으로 DB에서 user 정보와 확인
         MemberRefreshToken memberRefreshToken = refreshTokenRepository.findByUsernameAndRefreshToken(username, dto.getRefreshToken());
         log.info("UserRefreshToken={}", refreshToken);
         if (memberRefreshToken == null) {
-            throw new AuthException(
-                    AuthErrorCode.INVALID_REFRESH_TOKEN,
+            throw new BadCredentialsException(
                     "가입되지 않은 회원이거나 유효하지 않은 리프레시 토큰입니다."
             );
         }

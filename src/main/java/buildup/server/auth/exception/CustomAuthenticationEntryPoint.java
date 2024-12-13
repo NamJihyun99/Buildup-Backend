@@ -4,9 +4,9 @@ import buildup.server.common.response.BasicResponse;
 import buildup.server.common.response.ErrorEntity;
 import buildup.server.common.response.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -14,10 +14,11 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) {
         sendError(response, exception);
     }
 
@@ -33,7 +34,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         try{
             response.getWriter().write(objectMapper.writeValueAsString(basicResponse));
         }catch (IOException ex){
-            ex.printStackTrace();
+            log.error(ex.getMessage());
         }
     }
 }

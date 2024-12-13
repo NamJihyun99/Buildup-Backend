@@ -1,7 +1,6 @@
 package buildup.server.common.exception;
 
 import buildup.server.activity.exception.ActivityException;
-import buildup.server.auth.exception.AuthException;
 import buildup.server.category.exception.CategoryException;
 import buildup.server.common.response.ErrorEntity;
 import buildup.server.member.exception.MemberException;
@@ -36,9 +35,9 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorEntity handleAuthException(AuthException e) {
-        log.error("Auth Exception({})={}", e.getErrorCode(), e.getErrorMessage());
-        return new ErrorEntity(e.getErrorCode().toString(), e.getErrorMessage());
+    public ErrorEntity handleAuthException(AuthenticationException e) {
+        log.error("Authentication Exception={}", e.getMessage());
+        return new ErrorEntity(e.getMessage());
     }
 
     @ExceptionHandler(S3Exception.class)
