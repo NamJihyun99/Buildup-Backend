@@ -12,7 +12,6 @@ plugins {
 
 group = 'buildup'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21'
 
 configurations {
 	compileOnly {
@@ -57,7 +56,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get() asFile
 
 tasks.withType(JavaCompile) {
 	options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
